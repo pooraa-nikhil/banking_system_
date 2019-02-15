@@ -4,11 +4,12 @@ import (
 	"log"
 	"os"
 	//"encoding/json"
+	accounts "./accounts"
 	ag "./ag"
-	pg "github.com/go-pg/pg"
-	aqua "github.com/rightjoin/aqua"
 	customer "./customer"
 	transactions "./transactions"
+	pg "github.com/go-pg/pg"
+	aqua "github.com/rightjoin/aqua"
 )
 
 func main() {
@@ -19,24 +20,25 @@ func main() {
 	}
 	log.Printf("Connection Successful\n")
 
-
 	customer.CreateTables(pg_db)
 	transactions.CreateTables(pg_db)
+	accounts.CreateTables(pg_db)
 	ag.Create_Table(pg_db)
 	service := aqua.NewRestServer()
 	service.AddService(&customer.CustomerService{})
 	service.AddService(&transactions.TransactionService{})
 	service.AddService(&ag.Branch_Api{})
+	service.AddService(&accounts.StartService{})
 	service.Run()
 }
 
-func Connect() (*pg.DB) {
-	
-	opts := &pg.Options {
-		User : "postgres",
-		Password : "abcd",
-		Addr : "10.1.4.152:5432",
-		Database : "bank_pro",
+func Connect() *pg.DB {
+
+	opts := &pg.Options{
+		User:     "postgres",
+		Password: "abcd",
+		Addr:     "10.1.4.152:5432",
+		Database: "bank_pro",
 	}
 
 	var db *pg.DB = pg.Connect(opts)
@@ -46,4 +48,3 @@ func Connect() (*pg.DB) {
 
 	return db
 }
-
