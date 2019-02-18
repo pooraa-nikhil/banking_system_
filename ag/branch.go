@@ -11,8 +11,8 @@ import (
 type Branch struct {
 	Id        int       `sql:"id,pk type:serial"`
 	IFSC      string    `sql:"ifsc,unique"`
-	Name      string    `sql:"name,notnull"`
-	Address   string    `sql:"address,notnull"`
+	Name      string    `sql:"name"`
+	Address   string    `sql:"address"`
 	CreatedBy string    `sql:"createdby"`
 	CreatedAt time.Time `sql:"createdat"`
 }
@@ -114,8 +114,6 @@ func Update_in_Table(db *pg.DB, data string, id int) {
 
 func Delete_from_Table(db *pg.DB, data string, id int) string {
 
-	/*var del_br = Unmarsh(data)*/
-
 	var acc []Accounts
 	var ac Accounts
 	ac.Branch_id = 103
@@ -127,7 +125,6 @@ func Delete_from_Table(db *pg.DB, data string, id int) string {
 	}
 
 	if len(acc) != 0 {
-		//.Set("branch_id = ?", ac.Branch_id)
 		_, up_acc_err := db.Model(&ac).Where("branch_id = ?", id).UpdateNotNull()
 
 		if up_acc_err != nil {
