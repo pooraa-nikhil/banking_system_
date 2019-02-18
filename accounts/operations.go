@@ -40,7 +40,53 @@ func (ac *Accounts) UpdateAdd(accn int,bal int,db *pg.DB) error {
 
 }
 
+
+func (ac *Accounts) UpdateAddWithTransaction(accn int,bal int,db *pg.Tx) error {
+
+	updateErr := db.Model(ac).Column("balance").Where("account_number=?",accn).Select()
+	if updateErr != nil {
+		log.Printf("There was an error updating the balance. Reason: %v\n",updateErr)
+		return updateErr
+	}
+	(*ac).Balance = (*ac).Balance + bal
+	log.Println((*ac).Balance)
+
+	_,updateErr1 := db.Model(ac).Set("balance=?",(*ac).Balance).Where("account_number=?",accn).Update()
+	if updateErr1 != nil {
+		log.Printf("There was an error updating the balance. Reason: %v\n",updateErr1)
+		return updateErr1
+	}
+	log.Printf("The balance was added successfully.")
+	return nil
+
+}
+
 func (ac *Accounts) UpdateSubtract(accn int,bal int,db *pg.DB) error {
+
+	log.Println(accn)
+	log.Println(bal)
+	updateErr := db.Model(ac).Column("balance").Where("account_number=?",accn).Select()
+	if updateErr != nil {
+		log.Printf("There was an error updating the balance. Reason: %v\n",updateErr)
+		return updateErr
+	}
+	if (*ac).Balance < bal {
+		return errors.New("Insuffient Balance")
+	}
+	(*ac).Balance = (*ac).Balance - bal
+	log.Println((*ac).Balance)
+
+	_,updateErr1 := db.Model(ac).Set("balance=?",(*ac).Balance).Where("account_number=?",accn).Update()
+	if updateErr1 != nil {
+		log.Printf("There was an error updating the balance. Reason: %v\n",updateErr1)
+		return updateErr1
+	}
+	log.Printf("The balance was subtracted successfully.")
+	return nil
+
+}
+
+func (ac *Accounts) UpdateSubtractWithTransaction(accn int,bal int,db *pg.Tx) error {
 
 	log.Println(accn)
 	log.Println(bal)

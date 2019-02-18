@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-pg/pg"
-
+	account ".././accounts"
 	"time"
 )
 
@@ -116,8 +116,8 @@ func Delete_from_Table(db *pg.DB, data string, id int) string {
 
 	/*var del_br = Unmarsh(data)*/
 
-	var acc []Accounts
-	var ac Accounts
+	var acc []account.Accounts
+	var ac account.Accounts
 	ac.Branch_id = 103
 
 	_, acc_err := db.Query(&acc, `select * from accounts where branch_id = ?`, id)
