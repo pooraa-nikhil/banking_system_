@@ -1,7 +1,7 @@
 package ag
 
 import (
-	account ".././accounts"
+	account "github.com/pooraa-nikhil/banking_system_/accounts"
 	"encoding/json"
 	"fmt"
 	"github.com/go-pg/pg"

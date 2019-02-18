@@ -1,4 +1,4 @@
-package accounts 
+package accounts
 
 import (
 
@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	pg "github.com/go-pg/pg"
 	aqua "github.com/rightjoin/aqua"
-
 
 )
 

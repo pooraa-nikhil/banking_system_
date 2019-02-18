@@ -18,7 +18,7 @@ func CreateTransactionTable(db *pg.DB) error {
 	return nil
 }
 
-func (transation *Transaction) InsertIntoTransaction(db *pg.Tx) error {
+func (transation *Transaction) insertIntoTransaction(db *pg.Tx) error {
 
 	insertError := db.Insert(transation)
 	if insertError != nil {
@@ -28,7 +28,7 @@ func (transation *Transaction) InsertIntoTransaction(db *pg.Tx) error {
 	return nil
 }
 
-func GetTransactionListByType(acc_no int, tt string, db *pg.DB) ([]Transaction,error) {
+func getTransactionListByType(acc_no int, tt string, db *pg.DB) ([]Transaction,error) {
 
 	var transactions []Transaction
 	log.Println(tt,acc_no)

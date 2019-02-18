@@ -2,16 +2,15 @@ package customer
 
 import (
 	"time"
-	"os"
 	"log"
 	"encoding/json"
-	pg "github.com/go-pg/pg"
+	//pg "github.com/go-pg/pg"
+	lib "github.com/pooraa-nikhil/banking_system_/lib"
+	
 	aqua "github.com/rightjoin/aqua"
 )
 
 type CustomerService struct {
-
-	pg_db  *pg.DB
 
 	aqua.RestService 					`root:"customer" prefix:"service"`	
 	createCustomer 		aqua.POST 		`url:"/"`
@@ -22,26 +21,27 @@ type CustomerService struct {
 
 }
 
-var pg_db *pg.DB
+// func Init() {
 
-func CreateTables(db *pg.DB) {
-
-	pg_db = db
+// 	pg_db = pg.Connect()
 		
-	err:= CreateCustomer(pg_db)
-	err1 := CreateCustomerHistory(pg_db)
-	if err != nil {
-		log.Printf("Error while creating table customer, Error : %v\n", err)
-		os.Exit(100)
-	}
+// 	err:= CreateCustomer(pg_db)
+// 	err1 := CreateCustomerHistory(pg_db)
+// 	if err != nil {
+// 		log.Printf("Error while creating table customer, Error : %v\n", err)
+// 		os.Exit(100)
+// 	}
 
-	if err1 != nil {
-		log.Printf("Error while creating table customer history, Error : %v\n", err1)
-		os.Exit(100)
-	}
-}
+// 	if err1 != nil {
+// 		log.Printf("Error while creating table customer history, Error : %v\n", err1)
+// 		os.Exit(100)
+// 	}
+// }
 
-func (service *CustomerService) CreateCustomer(j aqua.Aide) string {
+func (cs *CustomerService) CreateCustomer(j aqua.Aide) string {
+	
+	pg_db := lib.Connect()
+	defer pg_db.Close()
 
 	j.LoadVars()
 	temp := &Customer{}
@@ -55,17 +55,21 @@ func (service *CustomerService) CreateCustomer(j aqua.Aide) string {
 
 	log.Printf("%v",temp)
 
-	insertErr := temp.InsertIntoCustomer(pg_db)
+	insertErr := temp.insertIntoCustomer(pg_db)
 
 	if insertErr != nil {
 		log.Printf("Error while inserting into customer, Error : %v\n", insertErr)
 		return "failure"
 	}
 
-	return "success created"
+	return "success"
 }
 
-func (service *CustomerService) UpdateCustomer(id int, j aqua.Aide) string {
+func (cs *CustomerService) UpdateCustomer(id int, j aqua.Aide) string {
+	
+	pg_db := lib.Connect()
+	defer pg_db.Close()
+
 	j.LoadVars()
 	temp := &Customer{}
 	err := json.Unmarshal([]byte(j.Body), temp)
@@ -74,7 +78,7 @@ func (service *CustomerService) UpdateCustomer(id int, j aqua.Aide) string {
 		return "Failure"
 	}
 
-	updateErr := temp.UpdateIntoCustomer(pg_db, id)
+	updateErr := temp.updateIntoCustomer(pg_db, id)
 	if updateErr != nil {
 		log.Printf("Error while updating customer, Error : %v\n", updateErr)
 		return "Failure"
@@ -83,10 +87,13 @@ func (service *CustomerService) UpdateCustomer(id int, j aqua.Aide) string {
 	return "success"
 }
 
-func (service *CustomerService) DeleteCustomer(id int , j aqua.Aide) string {
-	j.LoadVars()
+func (cs *CustomerService) DeleteCustomer(id int , j aqua.Aide) string {
+	
+	pg_db := lib.Connect()
+	defer pg_db.Close()
 
-	deleteErr := DeleteFromCustomer(pg_db, id)
+	j.LoadVars()
+	deleteErr := deleteFromCustomer(pg_db, id)
 	if deleteErr != nil {
 		log.Printf("Error while deleting from customer, Error : %v\n", deleteErr)
 		return "failure"
@@ -95,10 +102,13 @@ func (service *CustomerService) DeleteCustomer(id int , j aqua.Aide) string {
 	return "success"
 }
 
-func (service *CustomerService) GetCustomerByID(id int,j aqua.Aide) string {
-	j.LoadVars()
+func (cs *CustomerService) GetCustomerByID(id int,j aqua.Aide) string {
+	
+	pg_db := lib.Connect()
+	defer pg_db.Close()
 
-	temp, err1 := GetCustomerById(pg_db, id)
+	j.LoadVars()
+	temp, err1 := getCustomerById(pg_db, id)
 	if err1 != nil {
 		log.Printf("Error while querying by id, Error : \n",err1)
 		return "failure"
@@ -111,10 +121,13 @@ func (service *CustomerService) GetCustomerByID(id int,j aqua.Aide) string {
 	return string(resp)
 }
 
-func (service *CustomerService) ListCustomers(j aqua.Aide) string {
-	j.LoadVars()
+func (cs *CustomerService) ListCustomers(j aqua.Aide) string {
+	
+	pg_db := lib.Connect()
+	defer pg_db.Close()
 
-	customers , err := GetAllCustomers(pg_db)
+	j.LoadVars()
+	customers , err := getAllCustomers(pg_db)
 	if err != nil {
 		log.Printf("Error while querying by id\n")
 		return "failure"
