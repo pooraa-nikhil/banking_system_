@@ -1,18 +1,18 @@
 package customer
 
 import (
-	"log"
-	"time"
+	ag ".././accounts"
 	"errors"
 	pg "github.com/go-pg/pg"
-	ag ".././ag"
 	orm "github.com/go-pg/pg/orm"
- )
+	"log"
+	"time"
+)
 
 func CreateCustomer(db *pg.DB) error {
 
-	opts := &orm.CreateTableOptions {
-			IfNotExists : true,
+	opts := &orm.CreateTableOptions{
+		IfNotExists: true,
 	}
 
 	createErr := db.CreateTable(&Customer{}, opts)
@@ -36,7 +36,7 @@ func (customer *Customer) InsertIntoCustomer(db *pg.DB) error {
 
 func (customer *Customer) UpdateIntoCustomer(db *pg.DB, id int) error {
 
-	custById, err := GetCustomerById(db,id)
+	custById, err := GetCustomerById(db, id)
 
 	if err != nil {
 		return err
@@ -52,8 +52,8 @@ func (customer *Customer) UpdateIntoCustomer(db *pg.DB, id int) error {
 
 	cust.InsertIntoCustomerHistroy(db)
 
-	_ , updateErr := db.Model(customer).Where("id=?", id).Returning("*").UpdateNotNull()
-	
+	_, updateErr := db.Model(customer).Where("id=?", id).Returning("*").UpdateNotNull()
+
 	log.Printf("%v\n", customer)
 
 	if updateErr != nil {
@@ -75,7 +75,7 @@ func DeleteFromCustomer(db *pg.DB, id int) error {
 
 	// TODO: forign key constraint from account table
 
-	custById, err := GetCustomerById(db,id)
+	custById, err := GetCustomerById(db, id)
 
 	if err != nil {
 		return err
@@ -92,7 +92,7 @@ func DeleteFromCustomer(db *pg.DB, id int) error {
 	cust.InsertIntoCustomerHistroy(db)
 
 	var customer Customer
-	_ , deleteErr := db.Model(&customer).Where("id=?",id).Returning("*").Delete()
+	_, deleteErr := db.Model(&customer).Where("id=?", id).Returning("*").Delete()
 
 	log.Printf("%v\n", customer)
 	if deleteErr != nil {
@@ -103,16 +103,16 @@ func DeleteFromCustomer(db *pg.DB, id int) error {
 	return nil
 }
 
-func GetCustomerById(db *pg.DB, id int) (Customer,error) {
+func GetCustomerById(db *pg.DB, id int) (Customer, error) {
 	customer := &Customer{}
-	err := db.Model(customer).Where("id=?",id).Select()
+	err := db.Model(customer).Where("id=?", id).Select()
 	if err != nil {
-		return *customer,err
+		return *customer, err
 	}
-	return *customer,nil
+	return *customer, nil
 }
 
-func GetAllCustomers(db *pg.DB) ([]Customer,error) {
+func GetAllCustomers(db *pg.DB) ([]Customer, error) {
 	var customer []Customer
 	err := db.Model(&customer).Select()
 	if err != nil {
@@ -122,12 +122,12 @@ func GetAllCustomers(db *pg.DB) ([]Customer,error) {
 	return customer, nil
 }
 
-// ======== Customer History =========== 
+// ======== Customer History ===========
 
 func CreateCustomerHistory(db *pg.DB) error {
 
-	opts := &orm.CreateTableOptions {
-			IfNotExists : true,
+	opts := &orm.CreateTableOptions{
+		IfNotExists: true,
 	}
 
 	createErr := db.CreateTable(&Customer_history{}, opts)
@@ -141,12 +141,12 @@ func CreateCustomerHistory(db *pg.DB) error {
 func (history *Customer_history) InsertIntoCustomerHistroy(db *pg.DB) {
 
 	insertError := db.Insert(history)
-	if insertError !=nil {
+	if insertError != nil {
 		log.Printf("Error : %v", insertError)
 		return
 	}
 	log.Printf("added to customer history")
-	return 
+	return
 }
 
 func DeleteFromCustomerHistory(db *pg.DB, id int) error {
@@ -154,7 +154,7 @@ func DeleteFromCustomerHistory(db *pg.DB, id int) error {
 	// TODO: forign key constraint from account table
 
 	var customer Customer_history
-	_ , deleteErr := db.Model(&customer).Where("id=?",id).Delete()
+	_, deleteErr := db.Model(&customer).Where("id=?", id).Delete()
 
 	log.Printf("%v\n", customer)
 	if deleteErr != nil {

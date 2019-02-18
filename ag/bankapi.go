@@ -15,6 +15,7 @@ type Branch_Api struct {
 	updbranch        aqua.PUT    `url:"/{id:[0-9]+}"`
 	delbranch        aqua.DELETE `url:"/{id:[0-9]+}"`
 	listbranch       aqua.GET    `url:"/"`
+	/*listhistory		aqua.GET `url:"/"`*/
 }
 
 var db_co *pg.DB
