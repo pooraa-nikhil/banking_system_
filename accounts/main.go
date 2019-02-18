@@ -86,9 +86,6 @@ func CreateTables(db *pg.DB) {
 
 	pg_db = db
 	CreateAccountsTable(pg_db)
-
-
-	
-	//db.CreateAccountsHistoryTable(pg_db)
+	CreateAccountsHistoryTable(pg_db)
 
 }

@@ -4,6 +4,7 @@ import (
 
 	"log"
 	"errors"
+	"time"
 	pg "github.com/go-pg/pg"
 	orm "github.com/go-pg/pg/orm"
 )
@@ -20,7 +21,16 @@ import (
 
 }*/
 
+func (ac *Accounts) GetCustomerByAccn(db *pg.DB, accn int) (Accounts,error) {
+	err := db.Model(ac).Where("account_number=?",accn).Select()
+	if err != nil {
+		return *ac,err
+	}
+	return *ac,nil
+}
+
 func (ac *Accounts) UpdateAdd(accn int,bal int,db *pg.DB) error {
+
 
 	updateErr := db.Model(ac).Column("balance").Where("account_number=?",accn).Select()
 	if updateErr != nil {
@@ -36,11 +46,30 @@ func (ac *Accounts) UpdateAdd(accn int,bal int,db *pg.DB) error {
 		return updateErr1
 	}
 	log.Printf("The balance was added successfully.")
+
+	custByAccn, err :=ac.GetCustomerByAccn(db,accn)
+	if err!= nil {
+		log.Printf("There was an error getting the details.Reason: %v\n",err)
+		return err
+	}
+	acc := &Account_history{}
+	acc.Accounts = custByAccn
+	acc.Operation = "Update"
+	acc.Executed_by = "Chaitanya"
+	acc.Time = time.Now()
+	insertErr := db.Insert(acc)
+	if insertErr != nil {
+		log.Printf("Error while inserting into Account_history,Reason: %v\n",insertErr)
+		return insertErr
+	}
+	log.Printf("Insertion into Account_history successful")
+
 	return nil
 
 }
 
 func (ac *Accounts) UpdateSubtract(accn int,bal int,db *pg.DB) error {
+
 
 	log.Println(accn)
 	log.Println(bal)
@@ -60,7 +89,24 @@ func (ac *Accounts) UpdateSubtract(accn int,bal int,db *pg.DB) error {
 		log.Printf("There was an error updating the balance. Reason: %v\n",updateErr1)
 		return updateErr1
 	}
-	log.Printf("The balance was subtracted successfully.")
+	custByAccn, err := ac.GetCustomerByAccn(db,accn)
+	if err!= nil {
+		log.Printf("There was an error getting the details.Reason: %v\n",err)
+		return err
+	}
+	acc := &Account_history{}
+	acc.Accounts = custByAccn
+	acc.Operation = "Update"
+	acc.Executed_by = "Chaitanya"
+	acc.Time = time.Now()
+
+	insertErr := db.Insert(acc)
+	if insertErr != nil {
+		log.Printf("Error while inserting into Account_history,Reason: %v\n",insertErr)
+		return insertErr
+	}
+	log.Printf("Insertion into Account_history successful")
+
 	return nil
 
 }
@@ -108,7 +154,7 @@ func CreateAccountsHistoryTable(db *pg.DB) error {
 	opts := &orm.CreateTableOptions{
 		IfNotExists: true,
 	}
-	createErr := db.CreateTable(Account_history{}, opts)
+	createErr := db.CreateTable(&Account_history{}, opts)
 	if createErr!=nil {
 		log.Printf("Error while creating table Accounts history,Reason: %v\n", createErr)
 		return createErr
@@ -116,3 +162,4 @@ func CreateAccountsHistoryTable(db *pg.DB) error {
 	log.Printf("Table Accounts history created successfully.\n")
 	return nil
 }
+
