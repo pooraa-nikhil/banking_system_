@@ -36,6 +36,15 @@ func (customer *Customer) InsertIntoCustomer(db *pg.DB) error {
 
 func (customer *Customer) UpdateIntoCustomer(db *pg.DB, id int) error {
 
+
+	_ , updateErr := db.Model(customer).Where("id=?", id).Returning("*").UpdateNotNull()
+	
+	log.Printf("%v\n", customer)
+
+	if updateErr != nil {
+		return updateErr
+	}
+
 	custById, err := GetCustomerById(db,id)
 
 	if err != nil {
@@ -52,14 +61,6 @@ func (customer *Customer) UpdateIntoCustomer(db *pg.DB, id int) error {
 
 	cust.InsertIntoCustomerHistroy(db)
 
-	_ , updateErr := db.Model(customer).Where("id=?", id).Returning("*").UpdateNotNull()
-	
-	log.Printf("%v\n", customer)
-
-	if updateErr != nil {
-		return updateErr
-	}
-
 	log.Printf("Success update\n")
 	return nil
 }
@@ -74,6 +75,14 @@ func DeleteFromCustomer(db *pg.DB, id int) error {
 	}
 
 	// TODO: forign key constraint from account table
+
+	var customer Customer
+	_ , deleteErr := db.Model(&customer).Where("id=?",id).Returning("*").Delete()
+
+	log.Printf("%v\n", customer)
+	if deleteErr != nil {
+		return deleteErr
+	}
 
 	custById, err := GetCustomerById(db,id)
 
@@ -90,14 +99,6 @@ func DeleteFromCustomer(db *pg.DB, id int) error {
 	log.Printf("%v\n", cust)
 
 	cust.InsertIntoCustomerHistroy(db)
-
-	var customer Customer
-	_ , deleteErr := db.Model(&customer).Where("id=?",id).Returning("*").Delete()
-
-	log.Printf("%v\n", customer)
-	if deleteErr != nil {
-		return deleteErr
-	}
 
 	log.Printf("Success delete\n")
 	return nil

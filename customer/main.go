@@ -11,6 +11,8 @@ import (
 
 type CustomerService struct {
 
+	pg_db  *pg.DB
+
 	aqua.RestService 					`root:"customer" prefix:"service"`	
 	createCustomer 		aqua.POST 		`url:"/"`
 	updateCustomer		aqua.PUT		`url:"/{id:[0-9]+}"`
