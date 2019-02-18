@@ -5,6 +5,7 @@ import (
 	"log"
 	"encoding/json"
 	"strconv"
+	account ".././accounts"
 	aqua "github.com/rightjoin/aqua"
 	pg 	 "github.com/go-pg/pg"	
 )
@@ -39,7 +40,7 @@ func (transaction *TransactionService) CreateTransaction(j aqua.Aide) string {
 
 	var str = temp.Method
 	switch str {
-		case "customer_to_customer" : 
+		case "customer_to_customer" :
 			if temp.Target_Number == 0 {
 				return "Please provide target account number\n"
 			}
@@ -48,9 +49,23 @@ func (transaction *TransactionService) CreateTransaction(j aqua.Aide) string {
 
 			log.Println(temp)
 
-			err = temp.InsertIntoTransaction(pg_db)
+			temp_db, err := pg_db.Begin()
+
+			account := &account.Accounts{}
+			account.Account_number = temp.Account_Number
+			account.Balance = temp.Amount
+			err = account.UpdateAddWithTransaction(temp.Account_Number , temp.Amount, temp_db)
+
+			if err != nil {
+				temp_db.Rollback()
+				log.Printf("Error while updating in account, Error : %v\n", err)
+				return "Failure"
+			}
+
+			err = temp.InsertIntoTransaction(temp_db)
 			if err != nil {
 				log.Printf("error while inserting into transaction, Error : %v\n", err)
+				temp_db.Rollback()
 				return "Failure"
 			}
 
@@ -58,30 +73,99 @@ func (transaction *TransactionService) CreateTransaction(j aqua.Aide) string {
 			temp.Type = "credit"
 			temp.Id = 0
 
+			account.Account_number = temp.Account_Number
+			err = account.UpdateSubtractWithTransaction(temp.Account_Number , temp.Amount, temp_db)
+			if err != nil {
+				temp_db.Rollback()
+				log.Printf("error while updating in account, Error : %v\n", err)
+				return "Failure"
+			}
+
 			log.Println(temp)
 
 
-			err = temp.InsertIntoTransaction(pg_db)
+			err = temp.InsertIntoTransaction(temp_db)
 
 			if err != nil {
+				temp_db.Rollback()
 				log.Printf("error while inserting into transaction, Error : %v\n", err)
 				return "failure"
 			}
+
+			err = temp_db.Commit()
+
+			if err != nil {
+				temp_db.Rollback()
+				log.Printf("Error while commiting changes, %v\n", err)
+				return "Failue"
+			}
+
+
 		case "cash_withdrawal" :
 			temp.Type = "debit"
-			err = temp.InsertIntoTransaction(pg_db)
+
+			temp_db, err := pg_db.Begin()
+
+			account := &account.Accounts{}
+			account.Account_number = temp.Account_Number
+			account.Balance = temp.Amount
+
+			err = account.UpdateSubtractWithTransaction(temp.Account_Number , temp.Amount, temp_db)
+
 			if err != nil {
+				temp_db.Rollback()
+				log.Printf("Error while updating in account, Error : %v\n", err)
+				return "Failure"
+			}
+
+			err = temp.InsertIntoTransaction(temp_db)
+			if err != nil {
+				temp_db.Rollback()
 				log.Printf("error while inserting into transaction, Error : %v\n", err)
 				return "failure"
+			}
+
+			err = temp_db.Commit()
+
+			if err != nil {
+				temp_db.Rollback()
+				log.Printf("Error while commiting changes, %v\n", err)
+				return "Failue"
 			}
 
 		case "cash_deposite" :
 			temp.Type = "credit"
-			err = temp.InsertIntoTransaction(pg_db)
+
+			temp_db, err := pg_db.Begin()
+
+			account := &account.Accounts{}
+			account.Account_number = temp.Account_Number
+			account.Balance = temp.Amount
+
+			err = account.UpdateAddWithTransaction(temp.Account_Number , temp.Amount, temp_db)
+
+			if err != nil {
+				temp_db.Rollback()
+				log.Printf("Error while updating in account, Error : %v\n", err)
+				return "Failure"
+			}
+
+			err = temp.InsertIntoTransaction(temp_db)
 			if err != nil {
 				log.Printf("error while inserting into transaction, Error : %v\n", err)
 				return "Failure"
 			}
+
+			err = temp_db.Commit()
+
+			if err != nil {
+				temp_db.Rollback()
+				log.Printf("Error while commiting changes, %v\n", err)
+				return "Failue"
+			}
+
+
+
 		default :
 			log.Printf("Please give valid method\n")
 			return "failure"

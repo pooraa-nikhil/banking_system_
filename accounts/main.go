@@ -65,7 +65,6 @@ func (d *StartService) Deletecust(bid int,cusid int, j aqua.Aide) string {
 		return "Failure"
 	}
 	return "Success"
-
 }
 
 func (a *StartService) Addcust(j aqua.Aide) string {
