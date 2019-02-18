@@ -1,6 +1,7 @@
 package ag
 
 import (
+	account ".././accounts"
 	"encoding/json"
 	"fmt"
 	"github.com/go-pg/pg"
@@ -31,9 +32,7 @@ type History_Branch struct {
 		Database: "bank_pro",
 		Addr:     "localhost:5432",
 	}
-
 	db := pg.Connect(opts)
-
 	return db
 }
 */
@@ -48,6 +47,19 @@ func Selectall(db *pg.DB) []Branch {
 	}
 
 	return br
+}
+
+func Accesshistory(db *pg.DB) []History_Branch {
+
+	var hBr []History_Branch
+
+	_, err := db.Query(&hBr, `select * from history__branches`)
+
+	if err != nil {
+		fmt.Printf("error in displaying branch history. %v \n", err)
+	}
+
+	return hBr
 }
 
 func Insert_in_Table(db *pg.DB, data string) error {
@@ -114,9 +126,21 @@ func Update_in_Table(db *pg.DB, data string, id int) {
 
 func Delete_from_Table(db *pg.DB, data string, id int) string {
 
-	var acc []Accounts
-	var ac Accounts
-	ac.Branch_id = 103
+	var acc []account.Accounts
+	var ac account.Accounts
+	var new_id int
+
+	err_id := db.Model((*account.Accounts)(nil)).Column("id").Where("name = ?", "Head Branch").Select(&new_id)
+
+	if err_id != nil {
+		fmt.Println("error in finding id of Head Branch")
+	}
+
+	if new_id == id {
+		return "cannot delete Head Branch.\n"
+	}
+
+	ac.Branch_id = new_id
 
 	_, acc_err := db.Query(&acc, `select * from accounts where branch_id = ?`, id)
 
@@ -132,7 +156,7 @@ func Delete_from_Table(db *pg.DB, data string, id int) string {
 		}
 	}
 
-	fmt.Println(acc)
+	//fmt.Println(acc)
 
 	_, del_err := db.Model(&Branch{}).Where("id = ?", id).Delete()
 

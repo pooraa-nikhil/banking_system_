@@ -5,7 +5,7 @@ import (
 	"time"
 	"errors"
 	pg "github.com/go-pg/pg"
-	ag ".././ag"
+	ag ".././accounts"
 	orm "github.com/go-pg/pg/orm"
  )
 

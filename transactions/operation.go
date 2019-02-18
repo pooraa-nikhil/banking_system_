@@ -18,7 +18,7 @@ func CreateTransactionTable(db *pg.DB) error {
 	return nil
 }
 
-func (transation *Transaction) InsertIntoTransaction(db *pg.DB) error {
+func (transation *Transaction) InsertIntoTransaction(db *pg.Tx) error {
 
 	insertError := db.Insert(transation)
 	if insertError != nil {
