@@ -6,6 +6,8 @@ import (
 	
 )
 
+//This is the structure for Accounts table.
+
 type Accounts struct {
 
 	tableName struct{}		    `sql:"accounts"`
@@ -16,6 +18,9 @@ type Accounts struct {
 	Balance int 				`sql:"balance,type:bigint" json:"balance"`
 
 }
+
+/*This is the structure for Accounts history table that will contain all the details regarding any updation that happens
+in Accounts table.*/
 
 type Account_history struct {
 

@@ -12,6 +12,8 @@ import (
 
 var pg_db *pg.DB
 
+//This is the structure for making different types of services (CRUD operations)
+
 type StartService struct {
 
 	aqua.RestService `root:"accounts" prefix:"service"`
@@ -22,6 +24,9 @@ type StartService struct {
 //	update aqua.PUT `url:"updateCustomer"`
 
 }
+
+/*This is the API for doing updation(cash withdrawal) in Accounts table. The updation is done on basis of 
+account number and balance.*/
 
 func (u *StartService) Updatecustsubtract(accn int, bal int, j aqua.Aide) string {
 
@@ -38,6 +43,9 @@ func (u *StartService) Updatecustsubtract(accn int, bal int, j aqua.Aide) string
 
 }
 
+/*This is the API for doing updation(adding balance) in Accounts table. The updation is done on basis of account number
+and balance.*/
+
 func (u *StartService) Updatecust(accn int, bal int, j aqua.Aide) string {
 
 	j.LoadVars()
@@ -53,6 +61,10 @@ func (u *StartService) Updatecust(accn int, bal int, j aqua.Aide) string {
 
 }
 
+
+/*This is the API for deleting a customer from the accounts table. The customer is deleted on the basis on the basis of 
+branch id and customer id.*/
+
 func (d *StartService) Deletecust(bid int,cusid int, j aqua.Aide) string {
 	
 	j.LoadVars()
@@ -67,10 +79,12 @@ func (d *StartService) Deletecust(bid int,cusid int, j aqua.Aide) string {
 	return "Success"
 }
 
+//This is the API for adding a customer in the accounts table. 
+
 func (a *StartService) Addcust(j aqua.Aide) string {
 	j.LoadVars()
 	emptyObject := &Accounts{}
-	err := json.Unmarshal([]byte(j.Body),emptyObject)
+	err := json.Unpg_dbrshal([]byte(j.Body),emptyObject)
 	log.Println(emptyObject)
 	if err != nil {
 		log.Printf("Error occured.\n")
@@ -80,6 +94,9 @@ func (a *StartService) Addcust(j aqua.Aide) string {
 	return "Success"
 
 }
+
+
+//This function calls the create table functions to create the Accounts table and Account_history table.
 
 func CreateTables(db *pg.DB) {
 

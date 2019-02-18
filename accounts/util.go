@@ -9,17 +9,8 @@ import (
 	orm "github.com/go-pg/pg/orm"
 )
 
-/*func (achistory *Account_history) list(db *pg.DB) error {
+//This function returns the details of a customer from Accounts table using the account number.
 
-	getErr := db.Model(achistory).Where("account_number=?account_number").Select()
-	if getErr != nil {
-		log.Printf("Error while getting account history by using account number. Reason: %v\n.", getErr)
-		return getErr
-	}
-	log.Printf("Account history returned successfully.")
-	return nil
-
-}*/
 
 func (ac *Accounts) GetCustomerByAccn(db *pg.DB, accn int) (Accounts,error) {
 	err := db.Model(ac).Where("account_number=?",accn).Select()
@@ -28,6 +19,8 @@ func (ac *Accounts) GetCustomerByAccn(db *pg.DB, accn int) (Accounts,error) {
 	}
 	return *ac,nil
 }
+
+//This function adds the balance deposited by the customer to Accounts table using the customers account number.
 
 func (ac *Accounts) UpdateAdd(accn int,bal int,db *pg.DB) error {
 
@@ -69,6 +62,8 @@ func (ac *Accounts) UpdateAdd(accn int,bal int,db *pg.DB) error {
 }
 
 
+//This functions updates the Accounts table with transaction.
+
 func (ac *Accounts) UpdateAddWithTransaction(accn int,bal int,db *pg.Tx) error {
 
 	updateErr := db.Model(ac).Column("balance").Where("account_number=?",accn).Select()
@@ -88,6 +83,9 @@ func (ac *Accounts) UpdateAddWithTransaction(accn int,bal int,db *pg.Tx) error {
 	return nil
 
 }
+
+
+//This function debits balance from Accounts table of a particular customer by using their account number.
 
 func (ac *Accounts) UpdateSubtract(accn int,bal int,db *pg.DB) error {
 
@@ -132,6 +130,8 @@ func (ac *Accounts) UpdateSubtract(accn int,bal int,db *pg.DB) error {
 
 }
 
+//This function updates the Accounts table with transaction.
+
 func (ac *Accounts) UpdateSubtractWithTransaction(accn int,bal int,db *pg.Tx) error {
 
 	log.Println(accn)
@@ -157,6 +157,8 @@ func (ac *Accounts) UpdateSubtractWithTransaction(accn int,bal int,db *pg.Tx) er
 
 }
 
+//This function deletes the customer from Accounts table using their branch id and customer id.
+
 func (ac *Accounts) DeleteCustomer(bid int, cusid int,db *pg.DB) error {
 
 	_,deleteErr := db.Model(ac).
@@ -171,6 +173,8 @@ func (ac *Accounts) DeleteCustomer(bid int, cusid int,db *pg.DB) error {
 
 }
 
+//This function add a new customer in the Accounts table.
+
 func (ac *Accounts) Add(db *pg.DB) error {
 
 	insertErr := db.Insert(ac)
@@ -182,6 +186,8 @@ func (ac *Accounts) Add(db *pg.DB) error {
 	return nil
 
 }
+
+//This function creates a new Accounts table.
 
 func CreateAccountsTable(db *pg.DB) error {
 	opts := &orm.CreateTableOptions{
@@ -195,6 +201,8 @@ func CreateAccountsTable(db *pg.DB) error {
 	log.Printf("Table Accounts created successfully.\n")
 	return nil
 }
+
+//This function creates a new Account_history table.
 
 func CreateAccountsHistoryTable(db *pg.DB) error {
 	opts := &orm.CreateTableOptions{
