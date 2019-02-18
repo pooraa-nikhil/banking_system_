@@ -46,4 +46,3 @@ func Connect() (*pg.DB) {
 
 	return db
 }
-
