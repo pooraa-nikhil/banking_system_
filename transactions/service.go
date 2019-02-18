@@ -4,7 +4,8 @@ import (
 	"log"
 	"encoding/json"
 	"strconv"
-	lib "../lib"
+	//lib "github.com/pooraa-nikhil/banking_system_/lib"
+	lib "github.com/pooraa-nikhil/banking_system_/lib"
 	account "github.com/pooraa-nikhil/banking_system_/accounts"
 	aqua "github.com/rightjoin/aqua"
 )

@@ -1,7 +1,7 @@
 package customer
 
 import (
-	ag "../accounts"
+	ag "github.com/pooraa-nikhil/banking_system_/ag"
 	"errors"
 	pg "github.com/go-pg/pg"
 

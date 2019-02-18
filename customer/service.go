@@ -5,7 +5,8 @@ import (
 	"log"
 	"encoding/json"
 	//pg "github.com/go-pg/pg"
-	lib "../lib"
+	lib "github.com/pooraa-nikhil/banking_system_/lib"
+	
 	aqua "github.com/rightjoin/aqua"
 )
 
