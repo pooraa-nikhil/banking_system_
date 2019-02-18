@@ -4,7 +4,6 @@ import (
 	ag ".././accounts"
 	"errors"
 	pg "github.com/go-pg/pg"
-	ag ".././accounts"
 
 	orm "github.com/go-pg/pg/orm"
 	"log"
@@ -66,15 +65,6 @@ func (customer *Customer) UpdateIntoCustomer(db *pg.DB, id int) error {
 	cust.InsertIntoCustomerHistroy(db)
 
 
-	_, updateErr := db.Model(customer).Where("id=?", id).Returning("*").UpdateNotNull()
-
-	log.Printf("%v\n", customer)
-
-	if updateErr != nil {
-		return updateErr
-	}
-
-
 	log.Printf("Success update\n")
 	return nil
 }
@@ -116,14 +106,6 @@ func DeleteFromCustomer(db *pg.DB, id int) error {
 
 	cust.InsertIntoCustomerHistroy(db)
 
-
-	var customer Customer
-	_, deleteErr := db.Model(&customer).Where("id=?", id).Returning("*").Delete()
-
-	log.Printf("%v\n", customer)
-	if deleteErr != nil {
-		return deleteErr
-	}
 
 	log.Printf("Success delete\n")
 	return nil
