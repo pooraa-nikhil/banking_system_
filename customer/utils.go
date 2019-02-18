@@ -1,7 +1,7 @@
 package customer
 
 import (
-	ag ".././accounts"
+	ag "github.com/pooraa-nikhil/banking_system_/ag"
 	"errors"
 	pg "github.com/go-pg/pg"
 
@@ -24,7 +24,7 @@ func CreateCustomer(db *pg.DB) error {
 	return nil
 }
 
-func (customer *Customer) InsertIntoCustomer(db *pg.DB) error {
+func (customer *Customer) insertIntoCustomer(db *pg.DB) error {
 
 	insertError := db.Insert(customer)
 	if insertError != nil {
@@ -35,7 +35,7 @@ func (customer *Customer) InsertIntoCustomer(db *pg.DB) error {
 	return nil
 }
 
-func (customer *Customer) UpdateIntoCustomer(db *pg.DB, id int) error {
+func (customer *Customer) updateIntoCustomer(db *pg.DB, id int) error {
 
 
 
@@ -47,7 +47,7 @@ func (customer *Customer) UpdateIntoCustomer(db *pg.DB, id int) error {
 		return updateErr
 	}
 
-	custById, err := GetCustomerById(db,id)
+	custById, err := getCustomerById(db,id)
 
 
 	if err != nil {
@@ -62,14 +62,14 @@ func (customer *Customer) UpdateIntoCustomer(db *pg.DB, id int) error {
 
 	log.Printf("%v\n", cust)
 
-	cust.InsertIntoCustomerHistroy(db)
+	cust.insertIntoCustomerHistroy(db)
 
 
 	log.Printf("Success update\n")
 	return nil
 }
 
-func DeleteFromCustomer(db *pg.DB, id int) error {
+func deleteFromCustomer(db *pg.DB, id int) error {
 
 	rows, err := db.Model((*ag.Accounts)(nil)).Where("customer_id=?", id).Count()
 	log.Println(rows)
@@ -89,7 +89,7 @@ func DeleteFromCustomer(db *pg.DB, id int) error {
 		return deleteErr
 	}
 
-	custById, err := GetCustomerById(db,id)
+	custById, err := getCustomerById(db,id)
 
 
 	if err != nil {
@@ -104,14 +104,14 @@ func DeleteFromCustomer(db *pg.DB, id int) error {
 
 	log.Printf("%v\n", cust)
 
-	cust.InsertIntoCustomerHistroy(db)
+	cust.insertIntoCustomerHistroy(db)
 
 
 	log.Printf("Success delete\n")
 	return nil
 }
 
-func GetCustomerById(db *pg.DB, id int) (Customer, error) {
+func getCustomerById(db *pg.DB, id int) (Customer, error) {
 	customer := &Customer{}
 	err := db.Model(customer).Where("id=?", id).Select()
 	if err != nil {
@@ -120,7 +120,7 @@ func GetCustomerById(db *pg.DB, id int) (Customer, error) {
 	return *customer, nil
 }
 
-func GetAllCustomers(db *pg.DB) ([]Customer, error) {
+func getAllCustomers(db *pg.DB) ([]Customer, error) {
 	var customer []Customer
 	err := db.Model(&customer).Select()
 	if err != nil {
@@ -132,7 +132,7 @@ func GetAllCustomers(db *pg.DB) ([]Customer, error) {
 
 // ======== Customer History ===========
 
-func CreateCustomerHistory(db *pg.DB) error {
+func createCustomerHistory(db *pg.DB) error {
 
 	opts := &orm.CreateTableOptions{
 		IfNotExists: true,
@@ -146,7 +146,7 @@ func CreateCustomerHistory(db *pg.DB) error {
 	return nil
 }
 
-func (history *Customer_history) InsertIntoCustomerHistroy(db *pg.DB) {
+func (history *Customer_history) insertIntoCustomerHistroy(db *pg.DB) {
 
 	insertError := db.Insert(history)
 	if insertError != nil {
@@ -157,7 +157,7 @@ func (history *Customer_history) InsertIntoCustomerHistroy(db *pg.DB) {
 	return
 }
 
-func DeleteFromCustomerHistory(db *pg.DB, id int) error {
+func deleteFromCustomerHistory(db *pg.DB, id int) error {
 
 	// TODO: forign key constraint from account table
 

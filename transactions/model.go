@@ -14,4 +14,5 @@ type Transaction struct {
 	Method					string			`sql:"method,type:method_enum" json:"method"`
 	Amount					int 			`sql:"amount" json:"amount"`
 	Time					time.Time		`sql:"time" json:"time"`
+
 }
