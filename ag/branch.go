@@ -1,18 +1,19 @@
 package ag
 
 import (
+	account ".././accounts"
 	"encoding/json"
 	"fmt"
 	"github.com/go-pg/pg"
-	account ".././accounts"
+
 	"time"
 )
 
 type Branch struct {
 	Id        int       `sql:"id,pk type:serial"`
 	IFSC      string    `sql:"ifsc,unique"`
-	Name      string    `sql:"name,notnull"`
-	Address   string    `sql:"address,notnull"`
+	Name      string    `sql:"name"`
+	Address   string    `sql:"address"`
 	CreatedBy string    `sql:"createdby"`
 	CreatedAt time.Time `sql:"createdat"`
 }
@@ -31,9 +32,7 @@ type History_Branch struct {
 		Database: "bank_pro",
 		Addr:     "localhost:5432",
 	}
-
 	db := pg.Connect(opts)
-
 	return db
 }
 */
@@ -48,6 +47,19 @@ func Selectall(db *pg.DB) []Branch {
 	}
 
 	return br
+}
+
+func Accesshistory(db *pg.DB) []History_Branch {
+
+	var hBr []History_Branch
+
+	_, err := db.Query(&hBr, `select * from history__branches`)
+
+	if err != nil {
+		fmt.Printf("error in displaying branch history. %v \n", err)
+	}
+
+	return hBr
 }
 
 func Insert_in_Table(db *pg.DB, data string) error {
@@ -114,11 +126,21 @@ func Update_in_Table(db *pg.DB, data string, id int) {
 
 func Delete_from_Table(db *pg.DB, data string, id int) string {
 
-	/*var del_br = Unmarsh(data)*/
-
 	var acc []account.Accounts
 	var ac account.Accounts
-	ac.Branch_id = 103
+	var new_id int
+
+	err_id := db.Model((*account.Accounts)(nil)).Column("id").Where("name = ?", "Head Branch").Select(&new_id)
+
+	if err_id != nil {
+		fmt.Println("error in finding id of Head Branch")
+	}
+
+	if new_id == id {
+		return "cannot delete Head Branch.\n"
+	}
+
+	ac.Branch_id = new_id
 
 	_, acc_err := db.Query(&acc, `select * from accounts where branch_id = ?`, id)
 
@@ -127,7 +149,6 @@ func Delete_from_Table(db *pg.DB, data string, id int) string {
 	}
 
 	if len(acc) != 0 {
-		//.Set("branch_id = ?", ac.Branch_id)
 		_, up_acc_err := db.Model(&ac).Where("branch_id = ?", id).UpdateNotNull()
 
 		if up_acc_err != nil {
@@ -135,7 +156,7 @@ func Delete_from_Table(db *pg.DB, data string, id int) string {
 		}
 	}
 
-	fmt.Println(acc)
+	//fmt.Println(acc)
 
 	_, del_err := db.Model(&Branch{}).Where("id = ?", id).Delete()
 
