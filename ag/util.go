@@ -45,7 +45,7 @@ func accessHistory() []HistoryBranch {
 
 	var hBr []HistoryBranch
 
-	_, err := dbConnect.Query(&hBr, `select * from historybranches`)
+	_, err := dbConnect.Query(&hBr, `select * from history_branches`)
 	if err != nil {
 		panic(fmt.Sprintf("%v\n", err))
 	}
