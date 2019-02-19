@@ -22,7 +22,7 @@ import (
 */
 
 // List all entries in the Branch Table
-func SelectAll() []Branch {
+func selectAll() []Branch {
 
 	dbConnect := lib.Connect()
 	defer dbConnect.Close()
@@ -38,7 +38,7 @@ func SelectAll() []Branch {
 }
 
 // List history of all operations of the branch table
-func AccessHistory() []HistoryBranch {
+func accessHistory() []HistoryBranch {
 
 	dbConnect := lib.Connect()
 	defer dbConnect.Close()
@@ -54,12 +54,12 @@ func AccessHistory() []HistoryBranch {
 }
 
 // Insert in Branch Table
-func InsertInTable(data string) error {
+func insertInTable(data string) error {
 
 	dbConnect := lib.Connect()
 	defer dbConnect.Close()
 
-	var b = Unmarsh(data)
+	var b = unmarsh(data)
 
 	b.CreatedAt = time.Now()
 	b.CreatedBy = "batman"
@@ -69,7 +69,7 @@ func InsertInTable(data string) error {
 		panic(fmt.Sprintf("%v\n", inErr))
 	}
 
-	histErr := InsertInHistory(dbConnect, b, "Insert")
+	histErr := insertInHistory(dbConnect, b, "Insert")
 	if histErr != nil {
 		panic(fmt.Sprintf("%v\n", histErr))
 	}
@@ -78,7 +78,7 @@ func InsertInTable(data string) error {
 }
 
 // Insert in the HistoryBranch Table
-func InsertInHistory(db *pg.DB, b Branch, ops string) error {
+func insertInHistory(db *pg.DB, b Branch, ops string) error {
 
 	var hist HistoryBranch
 
@@ -99,26 +99,26 @@ func InsertInHistory(db *pg.DB, b Branch, ops string) error {
 }
 
 //Updation in Branch Table
-func UpdateInTable(data string, id int) {
+func updateInTable(data string, id int) {
 
 	dbConnect := lib.Connect()
 	defer dbConnect.Close()
 
-	var upBr = Unmarsh(data)
+	var upBr = unmarsh(data)
 
 	_, upErr := dbConnect.Model(&upBr).Where("id = ?", id).UpdateNotNull()
 	if upErr != nil {
 		panic(fmt.Sprintf("%v\n", upErr))
 	}
 
-	histErr := InsertInHistory(dbConnect, upBr, "Update")
+	histErr := insertInHistory(dbConnect, upBr, "Update")
 	if histErr != nil {
 		panic(fmt.Sprintf("%v\n", histErr))
 	}
 }
 
 //Delete from Branch Table
-func DeleteFromTable(data string, id int) string {
+func deleteFromTable(data string, id int) string {
 
 	dbConnect := lib.Connect()
 	defer dbConnect.Close()
@@ -154,7 +154,7 @@ func DeleteFromTable(data string, id int) string {
 		panic(fmt.Sprintf("%v\n", delErr))
 	}
 
-	histErr := InsertInHistory(dbConnect, Branch{}, "Delete")
+	histErr := insertInHistory(dbConnect, Branch{}, "Delete")
 	if histErr != nil {
 		panic(fmt.Sprintf("%v\n", histErr))
 	}
@@ -163,7 +163,7 @@ func DeleteFromTable(data string, id int) string {
 }
 
 //Unmarshal json data
-func Unmarsh(data string) Branch {
+func unmarsh(data string) Branch {
 
 	var byteData = []byte(data)
 	var br Branch

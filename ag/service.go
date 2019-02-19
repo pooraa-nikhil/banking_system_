@@ -39,14 +39,13 @@ func CreateTable() {
 	if histErr != nil {
 		panic(fmt.Sprintf("%v\n", histErr))
 	}
-
 }
 
 //API for Listing all Branch of the Bank
 func (b *BranchApi) ListBranch(j aqua.Aide) string {
 	j.LoadVars()
 
-	branch := SelectAll()
+	branch := selectAll()
 
 	return fmt.Sprintf("%v\n", branch)
 
@@ -57,7 +56,7 @@ func (b *BranchApi) InnBranch(j aqua.Aide) string {
 
 	j.LoadVars()
 
-	err := InsertInTable(j.Body)
+	err := insertInTable(j.Body)
 
 	if err != nil {
 		fmt.Println("error")
@@ -70,7 +69,7 @@ func (b *BranchApi) InnBranch(j aqua.Aide) string {
 //API for Updation of existing Branch
 func (b *BranchApi) UpdBranch(id int, j aqua.Aide) string {
 	j.LoadVars()
-	UpdateInTable(j.Body, id)
+	updateInTable(j.Body, id)
 
 	return "Updation in Branch Successfull\n"
 }
@@ -78,7 +77,7 @@ func (b *BranchApi) UpdBranch(id int, j aqua.Aide) string {
 //API for deletion for of an existing Branch
 func (b *BranchApi) DelBranch(id int, j aqua.Aide) string {
 	j.LoadVars()
-	str := DeleteFromTable(j.Body, id)
+	str := deleteFromTable(j.Body, id)
 
 	return str
 }
