@@ -18,10 +18,10 @@ type BranchApi struct {
 }
 
 // Creation of Branch and HistoryBranch Tables
-func CreateTable() {
+func CreateTable(dbConnect *pg.DB) {
 
-	dbConnect := lib.Connect()
-	defer dbConnect.Close()
+	//	dbConnect := lib.Connect()
+	//	defer dbConnect.Close()
 
 	opt := &orm.CreateTableOptions{
 		IfNotExists: true,

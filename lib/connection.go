@@ -1,6 +1,6 @@
 package lib
 
-import(
+import (
 	pg "github.com/go-pg/pg"
 	"io/ioutil"
 	"gopkg.in/yaml.v2"
