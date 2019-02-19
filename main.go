@@ -1,7 +1,7 @@
 package main
 
 import (
-	accounts "github.com/pooraa-nikhil/banking_system_/accounts"
+	account "github.com/pooraa-nikhil/banking_system_/accounts"
 	branch "github.com/pooraa-nikhil/banking_system_/ag"
 	customer "github.com/pooraa-nikhil/banking_system_/customer"
 	transactions "github.com/pooraa-nikhil/banking_system_/transactions"
@@ -12,7 +12,7 @@ func main() {
 	service := aqua.NewRestServer()
 	service.AddService(&customer.CustomerService{})
 	service.AddService(&transactions.TransactionService{})
-	service.AddService(&branch.Branch_Api{})
-	service.AddService(&accounts.StartService{})
+	service.AddService(&branch.BranchApi{})
+	service.AddService(&account.StartService{})
 	service.Run()
 }

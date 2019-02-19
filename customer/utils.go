@@ -1,11 +1,12 @@
 package customer
 
 import (
-	ag "github.com/pooraa-nikhil/banking_system_/accounts"
+	account "github.com/pooraa-nikhil/banking_system_/accounts"
 	"errors"
 	pg "github.com/go-pg/pg"
-
 	orm "github.com/go-pg/pg/orm"
+	account "github.com/pooraa-nikhil/banking_system_/accounts"
+	ag "github.com/pooraa-nikhil/banking_system_/ag"
 	"log"
 	"time"
 )
@@ -42,18 +43,15 @@ func (customer *Customer) insertIntoCustomer(db *pg.DB) error {
 // function to update a row in customer table
 func (customer *Customer) updateIntoCustomer(db *pg.DB, id int) error {
 
+	_, updateErr := db.Model(customer).Where("id=?", id).Returning("*").UpdateNotNull()
 
-
-	_ , updateErr := db.Model(customer).Where("id=?", id).Returning("*").UpdateNotNull()
-	
 	log.Printf("%v\n", customer)
 
 	if updateErr != nil {
 		return updateErr
 	}
 
-	custById, err := getCustomerById(db,id)
-
+	custById, err := getCustomerById(db, id)
 
 	if err != nil {
 		return err
@@ -69,7 +67,6 @@ func (customer *Customer) updateIntoCustomer(db *pg.DB, id int) error {
 
 	cust.insertIntoCustomerHistroy(db)
 
-
 	log.Printf("Success update\n")
 	return nil
 }
@@ -78,7 +75,7 @@ func (customer *Customer) updateIntoCustomer(db *pg.DB, id int) error {
 // function to delete a row from customer table
 func deleteFromCustomer(db *pg.DB, id int) error {
 
-	rows, err := db.Model((*ag.Accounts)(nil)).Where("customer_id=?", id).Count()
+	rows, err := db.Model((*account.Accounts)(nil)).Where("customer_id=?", id).Count()
 	log.Println(rows)
 
 	if rows > 0 {
@@ -87,17 +84,15 @@ func deleteFromCustomer(db *pg.DB, id int) error {
 
 	// TODO: forign key constraint from account table
 
-
 	var customer Customer
-	_ , deleteErr := db.Model(&customer).Where("id=?",id).Returning("*").Delete()
+	_, deleteErr := db.Model(&customer).Where("id=?", id).Returning("*").Delete()
 
 	log.Printf("%v\n", customer)
 	if deleteErr != nil {
 		return deleteErr
 	}
 
-	custById, err := getCustomerById(db,id)
-
+	custById, err := getCustomerById(db, id)
 
 	if err != nil {
 		return err
@@ -112,7 +107,6 @@ func deleteFromCustomer(db *pg.DB, id int) error {
 	log.Printf("%v\n", cust)
 
 	cust.insertIntoCustomerHistroy(db)
-
 
 	log.Printf("Success delete\n")
 	return nil
