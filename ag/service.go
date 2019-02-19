@@ -39,7 +39,6 @@ func CreateTable() {
 	if histErr != nil {
 		panic(fmt.Sprintf("%v\n", histErr))
 	}
-
 }
 
 //API for Listing all Branch of the Bank
