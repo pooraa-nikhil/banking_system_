@@ -5,7 +5,7 @@ import (
 	account "github.com/pooraa-nikhil/banking_system_/accounts"
 	branch "github.com/pooraa-nikhil/banking_system_/ag"
 	customer "github.com/pooraa-nikhil/banking_system_/customer"
-	transactions "github/pooraa-nikhil/banking_system_/transactions"
+	transactions "github.com/pooraa-nikhil/banking_system_/transactions"
 	aqua "github.com/rightjoin/aqua"
 )
 

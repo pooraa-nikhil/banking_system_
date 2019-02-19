@@ -5,11 +5,11 @@ import (
 	"log"
 	"encoding/json"
 	pg "github.com/go-pg/pg"
+	lib "github.com/pooraa-nikhil/banking_system_/lib"
 	aqua "github.com/rightjoin/aqua"
 
 )
 
-var pg_db *pg.DB
 
 //This is the structure for making different types of services (CRUD operations)
 
@@ -29,6 +29,9 @@ account number and balance.*/
 
 func (u *StartService) Updatecustsubtract(accn int, bal int, j aqua.Aide) string {
 
+	pg_db := lib.Connect()
+	defer pg_db.Close()
+
 	j.LoadVars()
 	acc1 := &Accounts{}
 
@@ -46,6 +49,9 @@ func (u *StartService) Updatecustsubtract(accn int, bal int, j aqua.Aide) string
 and balance.*/
 
 func (u *StartService) Updatecust(accn int, bal int, j aqua.Aide) string {
+
+	pg_db := lib.Connect()
+	defer pg_db.Close()
 
 	j.LoadVars()
 	acc1 := &Accounts{}
@@ -65,6 +71,9 @@ func (u *StartService) Updatecust(accn int, bal int, j aqua.Aide) string {
 branch id and customer id.*/
 
 func (d *StartService) Deletecust(bid int,cusid int, j aqua.Aide) string {
+
+	pg_db := lib.Connect()
+	defer pg_db.Close()
 	
 	j.LoadVars()
 	acc := &Accounts{}
@@ -81,6 +90,10 @@ func (d *StartService) Deletecust(bid int,cusid int, j aqua.Aide) string {
 //This is the API for adding a customer in the accounts table. 
 
 func (a *StartService) Addcust(j aqua.Aide) string {
+
+	pg_db := lib.Connect()
+	defer pg_db.Close()
+
 	j.LoadVars()
 	emptyObject := &Accounts{}
 	err := json.Unpg_dbrshal([]byte(j.Body),emptyObject)
@@ -99,7 +112,10 @@ func (a *StartService) Addcust(j aqua.Aide) string {
 
 func CreateTables(db *pg.DB) {
 
-	pg_db = db
+	pg_db := lib.Connect()
+	defer pg_db.Close()
+
+
 	CreateAccountsTable(pg_db)
 	CreateAccountsHistoryTable(pg_db)
 
