@@ -18,6 +18,6 @@ func main() {
 	service.AddService(&customer.CustomerService{})
 	service.AddService(&transactions.TransactionService{})
 	service.AddService(&branch.Branch_Api{})
-	service.AddService(&accounts.StartService{})
+	service.AddService(&account.StartService{})
 	service.Run()
 }
