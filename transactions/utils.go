@@ -6,6 +6,7 @@ import (
 	orm 	"github.com/go-pg/pg/orm"
 )
 
+// creation of transaction table
 func CreateTransactionTable(db *pg.DB) error {
 	opts := &orm.CreateTableOptions {
 			IfNotExists : true,
@@ -18,6 +19,7 @@ func CreateTransactionTable(db *pg.DB) error {
 	return nil
 }
 
+// function to insert a row in transaction table
 func (transation *Transaction) insertIntoTransaction(db *pg.Tx) error {
 
 	insertError := db.Insert(transation)
@@ -28,6 +30,7 @@ func (transation *Transaction) insertIntoTransaction(db *pg.Tx) error {
 	return nil
 }
 
+// function to get transaction list on basis of account number and type of method
 func getTransactionListByType(acc_no int, tt string, db *pg.DB) ([]Transaction,error) {
 
 	var transactions []Transaction
