@@ -1,16 +1,13 @@
 package customer
 
 import (
-	account "github.com/pooraa-nikhil/banking_system_/accounts"
 	"errors"
 	pg "github.com/go-pg/pg"
 	orm "github.com/go-pg/pg/orm"
 	account "github.com/pooraa-nikhil/banking_system_/accounts"
-	ag "github.com/pooraa-nikhil/banking_system_/ag"
 	"log"
 	"time"
 )
-
 
 // function to create customer table
 func CreateCustomer(db *pg.DB) error {
@@ -38,7 +35,6 @@ func (customer *Customer) insertIntoCustomer(db *pg.DB) error {
 	log.Printf("Added to customer\n")
 	return nil
 }
-
 
 // function to update a row in customer table
 func (customer *Customer) updateIntoCustomer(db *pg.DB, id int) error {
@@ -70,7 +66,6 @@ func (customer *Customer) updateIntoCustomer(db *pg.DB, id int) error {
 	log.Printf("Success update\n")
 	return nil
 }
-
 
 // function to delete a row from customer table
 func deleteFromCustomer(db *pg.DB, id int) error {
@@ -112,7 +107,6 @@ func deleteFromCustomer(db *pg.DB, id int) error {
 	return nil
 }
 
-
 // function to fetch a row from customer by Id
 func getCustomerById(db *pg.DB, id int) (Customer, error) {
 	customer := &Customer{}
@@ -135,7 +129,6 @@ func getAllCustomers(db *pg.DB) ([]Customer, error) {
 }
 
 // ======== Customer History ===========
-
 
 // function to create customer history table
 func CreateCustomerHistory(db *pg.DB) error {
@@ -163,7 +156,6 @@ func (history *Customer_history) insertIntoCustomerHistroy(db *pg.DB) {
 	log.Printf("added to customer history")
 	return
 }
-
 
 // function to delete from customer history table.
 func deleteFromCustomerHistory(db *pg.DB, id int) error {
