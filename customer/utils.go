@@ -1,6 +1,7 @@
 package customer
 
 import (
+	account "github.com/pooraa-nikhil/banking_system_/accounts"
 	"errors"
 	pg "github.com/go-pg/pg"
 	orm "github.com/go-pg/pg/orm"
@@ -10,6 +11,8 @@ import (
 	"time"
 )
 
+
+// function to create customer table
 func CreateCustomer(db *pg.DB) error {
 
 	opts := &orm.CreateTableOptions{
@@ -24,6 +27,7 @@ func CreateCustomer(db *pg.DB) error {
 	return nil
 }
 
+// function to insert a row in customer table
 func (customer *Customer) insertIntoCustomer(db *pg.DB) error {
 
 	insertError := db.Insert(customer)
@@ -35,6 +39,8 @@ func (customer *Customer) insertIntoCustomer(db *pg.DB) error {
 	return nil
 }
 
+
+// function to update a row in customer table
 func (customer *Customer) updateIntoCustomer(db *pg.DB, id int) error {
 
 	_, updateErr := db.Model(customer).Where("id=?", id).Returning("*").UpdateNotNull()
@@ -65,6 +71,8 @@ func (customer *Customer) updateIntoCustomer(db *pg.DB, id int) error {
 	return nil
 }
 
+
+// function to delete a row from customer table
 func deleteFromCustomer(db *pg.DB, id int) error {
 
 	rows, err := db.Model((*account.Accounts)(nil)).Where("customer_id=?", id).Count()
@@ -104,6 +112,8 @@ func deleteFromCustomer(db *pg.DB, id int) error {
 	return nil
 }
 
+
+// function to fetch a row from customer by Id
 func getCustomerById(db *pg.DB, id int) (Customer, error) {
 	customer := &Customer{}
 	err := db.Model(customer).Where("id=?", id).Select()
@@ -113,6 +123,7 @@ func getCustomerById(db *pg.DB, id int) (Customer, error) {
 	return *customer, nil
 }
 
+// function to get all customers
 func getAllCustomers(db *pg.DB) ([]Customer, error) {
 	var customer []Customer
 	err := db.Model(&customer).Select()
@@ -125,7 +136,9 @@ func getAllCustomers(db *pg.DB) ([]Customer, error) {
 
 // ======== Customer History ===========
 
-func createCustomerHistory(db *pg.DB) error {
+
+// function to create customer history table
+func CreateCustomerHistory(db *pg.DB) error {
 
 	opts := &orm.CreateTableOptions{
 		IfNotExists: true,
@@ -139,6 +152,7 @@ func createCustomerHistory(db *pg.DB) error {
 	return nil
 }
 
+// function to insert a row in customer history table.
 func (history *Customer_history) insertIntoCustomerHistroy(db *pg.DB) {
 
 	insertError := db.Insert(history)
@@ -150,6 +164,8 @@ func (history *Customer_history) insertIntoCustomerHistroy(db *pg.DB) {
 	return
 }
 
+
+// function to delete from customer history table.
 func deleteFromCustomerHistory(db *pg.DB, id int) error {
 
 	// TODO: forign key constraint from account table
