@@ -26,15 +26,15 @@ type CustomerService struct {
 // 	pg_db = pg.Connect()
 		
 // 	err:= CreateCustomer(pg_db)
-// 	err1 := CreateCustomerHistory(pg_db)
-// 	if err != nil {
+//  if err != nil {
 // 		log.Printf("Error while creating table customer, Error : %v\n", err)
-// 		os.Exit(100)
+// 		panic(100)
 // 	}
+// 	err1 := CreateCustomerHistory(pg_db)
 
 // 	if err1 != nil {
 // 		log.Printf("Error while creating table customer history, Error : %v\n", err1)
-// 		os.Exit(100)
+// 		panic(100)
 // 	}
 // }
 

@@ -1,0 +1,4 @@
+username: "postgres"
+password: "abcd"
+addr: "10.1.4.152:5432"
+database: "bank_pro"
