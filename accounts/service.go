@@ -108,15 +108,3 @@ func (a *StartService) Addcust(j aqua.Aide) string {
 }
 
 
-//This function calls the create table functions to create the Accounts table and Account_history table.
-
-func CreateTables(db *pg.DB) {
-
-	pg_db := lib.Connect()
-	defer pg_db.Close()
-
-
-	CreateAccountsTable(pg_db)
-	CreateAccountsHistoryTable(pg_db)
-
-}

@@ -1,13 +1,13 @@
 package main
 
 import (
+	accounts "github.com/pooraa-nikhil/banking_system_/accounts"
+	branch "github.com/pooraa-nikhil/banking_system_/ag"
 	"log"
-	accounts 		"github.com/pooraa-nikhil/banking_system_/accounts"
-	branch 			"github.com/pooraa-nikhil/banking_system_/ag"
 	//customer 		"github.com/pooraa-nikhil/banking_system_/customer"
-	customer 		"./customer"
-	transactions 	"github.com/pooraa-nikhil/banking_system_/transactions"
-	lib				"github.com/pooraa-nikhil/banking_system_/lib"
+	customer "./customer"
+	lib "github.com/pooraa-nikhil/banking_system_/lib"
+	transactions "github.com/pooraa-nikhil/banking_system_/transactions"
 )
 
 func main() {
@@ -31,6 +31,16 @@ func main() {
 	if err != nil {
 		log.Printf("Error : %v\n", err)
 	}
-	accounts.CreateTables(pg_db)
+
+	err := accounts.CreateAccountsTable(pg_db)
+	if err != nil {
+		log.Printf("Error : %v\n", err)
+	}
+
+	err := accounts.CreateAccountsHistoryTable(pg_db)
+	if err != nil {
+		log.Printf("Error : %v\n", err)
+	}
+
 	branch.Create_Table(pg_db)
 }
